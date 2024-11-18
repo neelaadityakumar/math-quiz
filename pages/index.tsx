@@ -8,7 +8,7 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const [scores, setScores] = useState<any[]>([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (isLoggedIn) {
       fetchQuestion();
@@ -43,6 +43,7 @@ export default function Home() {
       }
       const data = await res.json();
       setQuestion(data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching question:", error);
       setMessage("Error fetching question. Please try again later.");
@@ -95,6 +96,7 @@ export default function Home() {
     e.preventDefault();
     if (username.trim()) {
       setIsLoggedIn(true);
+      setLoading(true);
     } else {
       setMessage("Username cannot be empty.");
     }
@@ -124,6 +126,13 @@ export default function Home() {
             Start Playing
           </button>
         </form>
+      </div>
+    );
+  }
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Loading...
       </div>
     );
   }
