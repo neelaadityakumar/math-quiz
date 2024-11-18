@@ -173,19 +173,13 @@ export default function Home() {
           <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
             Leaderboard
           </h2>
-          <div className="space-y-4">
+          <div className="">
             {scores &&
               scores?.map((score) => (
-                <div
-                  key={score.id}
-                  className="flex justify-between items-center bg-gray-50 p-3 rounded-lg shadow-sm"
-                >
-                  <span className="font-medium text-gray-700">
-                    {score.username}
-                  </span>
-                  <span className="font-semibold text-gray-900">
-                    {score.score} points
-                  </span>
+                <div key={score.id} className="flex rounded-lg shadow-sm">
+                  <div className="font-medium text-gray-700">
+                    user : {score.username} scored: {score.score} points
+                  </div>
                 </div>
               ))}
           </div>
