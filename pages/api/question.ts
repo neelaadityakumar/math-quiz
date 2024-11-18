@@ -18,29 +18,37 @@ export default async function handler(
   }
 
   try {
-    const activeQuestions = await prisma.$queryRaw<QuestionResponse[]>`
-      SELECT id, problem, active, "createdAt"
-      FROM "Question"
-      WHERE active = true
-      ORDER BY "createdAt" DESC
-      LIMIT 1
-    `;
-
-    const activeQuestion = activeQuestions[0];
+    const activeQuestion = await prisma.question.findFirst({
+      where: {
+        active: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        problem: true,
+        active: true,
+        createdAt: true,
+      },
+    });
 
     if (!activeQuestion) {
       const newQuestion = generateQuestion();
-      const [created] = await prisma.$queryRaw<QuestionResponse[]>`
-        INSERT INTO "Question" (id, problem, answer, active, "createdAt")
-        VALUES (
-          gen_random_uuid()::text,
-          ${newQuestion.problem},
-          ${newQuestion.answer},
-          true,
-          CURRENT_TIMESTAMP
-        )
-        RETURNING id, problem, active, "createdAt"
-      `;
+      const created = await prisma.question.create({
+        data: {
+          problem: newQuestion.problem,
+          answer: newQuestion.answer,
+          active: true,
+          createdAt: new Date(),
+        },
+        select: {
+          id: true,
+          problem: true,
+          active: true,
+          createdAt: true,
+        },
+      });
 
       return res.json(created);
     }
